@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#5b5bd6">
+  <meta name="description" content="RemindMe+ helps you remember tasks, track completion, and build accountability.">
+  <title>RemindMe+ | Smart Accountability</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">R+</div>
+        <div><div class="brand-name">RemindMe<span>+</span></div><div class="brand-tag">Remember it. Do it. Track it.</div></div>
+      </div>
+      <button id="enableNotifications" class="icon-button" title="Enable notifications" aria-label="Enable notifications">♧</button>
+    </header>
+
+    <section class="welcome">
+      <div>
+        <p class="eyebrow" id="todayLabel">YOUR DAY</p>
+        <h1>Make time for<br><span>what matters.</span></h1>
+        <p class="subtext">Small reminders. Real progress.</p>
+      </div>
+      <div class="hero-art" aria-hidden="true"><div class="hero-ring"></div><div class="hero-check">✓</div><div class="hero-dot d1"></div><div class="hero-dot d2"></div></div>
+    </section>
+
+    <section class="stats-grid">
+      <article class="stat-card"><div class="stat-icon purple">◷</div><div><div class="stat-number" id="statPending">0</div><div class="stat-label">Pending</div></div></article>
+      <article class="stat-card"><div class="stat-icon green">✓</div><div><div class="stat-number" id="statDone">0</div><div class="stat-label">Completed</div></div></article>
+      <article class="stat-card"><div class="stat-icon orange">✦</div><div><div class="stat-number" id="statPoints">0</div><div class="stat-label">Points</div></div></article>
+    </section>
+
+    <section class="section-head">
+      <div><p class="eyebrow">YOUR ROUTINE</p><h2>Today's reminders</h2></div>
+      <button class="primary-button" id="openAdd">＋ Add task</button>
+    </section>
+
+    <div class="filter-row" role="group" aria-label="Filter tasks">
+      <button class="filter active" data-filter="ALL">All</button>
+      <button class="filter" data-filter="PENDING">Pending</button>
+      <button class="filter" data-filter="COMPLETED">Completed</button>
+      <button class="filter" data-filter="MISSED">Missed</button>
+    </div>
+
+    <section id="taskList" class="task-list" aria-live="polite"></section>
+    <section class="privacy-note"><div class="privacy-icon">◇</div><div><strong>Your tasks stay on this device</strong><p>This prototype stores task data locally in this browser. Photo proof is not uploaded.</p></div></section>
+    <footer>RemindMe+ prototype <span>•</span> Built for better habits</footer>
+  </div>
+
+  <nav class="bottom-nav" aria-label="Main navigation">
+    <button class="nav-item active" id="navHome"><span>⌂</span><small>Home</small></button>
+    <button class="nav-item" id="navHistory"><span>▤</span><small>History</small></button>
+    <button class="nav-item" id="navSettings"><span>⚙</span><small>Settings</small></button>
+  </nav>
+
+  <dialog id="taskDialog" class="modal">
+    <form id="taskForm" method="dialog">
+      <div class="modal-head"><div><p class="eyebrow">NEW REMINDER</p><h2>Create a task</h2></div><button type="button" class="close-button" id="closeAdd" aria-label="Close">×</button></div>
+      <label>Task name <input id="taskTitle" required maxlength="90" placeholder="e.g. Study Java for 30 minutes"></label>
+      <label>Notes (optional) <textarea id="taskNote" rows="2" maxlength="240" placeholder="Anything you want to remember"></textarea></label>
+      <div class="form-grid">
+        <label>Date <input id="taskDate" type="date" required></label>
+        <label>Time <input id="taskTime" type="time" required></label>
+      </div>
+      <label class="check-row"><input id="taskRepeat" type="checkbox"> Repeat every day</label>
+      <label class="check-row"><input id="taskProof" type="checkbox"> Ask for optional photo proof when completing</label>
+      <label>Reminder type
+        <select id="taskCategory"><option value="Personal">Personal</option><option value="Study">Study</option><option value="Health">Health</option><option value="Work">Work</option><option value="Gym">Gym / Fitness</option><option value="Finance">Finance</option></select>
+      </label>
+      <div class="form-hint">Browser reminders are best-effort. They may not fire if the browser is closed or the device blocks notifications.</div>
+      <button class="primary-button full-width" type="submit">Save reminder</button>
+    </form>
+  </dialog>
+
+  <dialog id="proofDialog" class="modal">
+    <form id="proofForm" method="dialog">
+      <div class="modal-head"><div><p class="eyebrow">TASK COMPLETION</p><h2>Mark as done</h2></div><button type="button" class="close-button" id="closeProof">×</button></div>
+      <p class="subtext">Confirm completion. If this task asks for photo proof, you can add a photo below. This prototype does not upload it.</p>
+      <label id="photoLabel">Optional proof photo <input id="proofPhoto" type="file" accept="image/*" capture="environment"></label>
+      <div id="photoPreview" class="photo-preview hidden"></div>
+      <label class="check-row"><input id="deletePhoto" type="checkbox" checked> Delete photo immediately after submitting</label>
+      <div class="form-hint">A photo cannot prove every task was truly completed. For medicines, use a safe personal confirmation/log instead of relying on a photo.</div>
+      <button class="primary-button full-width" type="submit">Confirm completed · +10 points</button>
+    </form>
+  </dialog>
+
+  <dialog id="settingsDialog" class="modal">
+    <div class="modal-head"><div><p class="eyebrow">PREFERENCES</p><h2>Settings</h2></div><button class="close-button" id="closeSettings">×</button></div>
+    <div class="setting-row"><div><strong>Browser notifications</strong><p>Allow this site to show notifications.</p></div><button class="secondary-button" id="settingsNotify">Enable</button></div>
+    <div class="setting-row"><div><strong>Export tasks</strong><p>Download a JSON backup of task records.</p></div><button class="secondary-button" id="exportData">Export</button></div>
+    <div class="setting-row"><div><strong>Reset local data</strong><p>Delete all reminders and points from this browser.</p></div><button class="danger-button" id="resetData">Reset</button></div>
+    <div class="form-hint">Location-based alerts, background scheduling, cloud sync and payments are not active in this browser prototype.</div>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
